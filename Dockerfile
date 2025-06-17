@@ -81,7 +81,6 @@ RUN mkdir -p ${HOME}/data
 
 # Copy workshop files
 COPY Datalabs/ ${HOME}/Datalabs/
-COPY Extra/ ${HOME}/Extra/
 COPY data/ ${HOME}/data/ 
 
 WORKDIR ${HOME}
