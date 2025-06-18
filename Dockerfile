@@ -11,7 +11,7 @@ RUN apt-get --allow-releaseinfo-change update && \
     g++ \
     libhdf5-dev \
     mpich \
-    wget 
+    wget
 
 # Set up Python environment
 ENV VIRTUAL_ENV=/opt/venv
@@ -26,7 +26,7 @@ ENV HOME=/home/${NB_USER}
 
 # Install Python packages
 RUN pip install --upgrade pip && \
-    pip install \
+    pip install --no-cache-dir \
     numpy \
     scipy \
     matplotlib \
@@ -42,7 +42,7 @@ RUN git clone --single-branch --branch develop --depth 1 https://github.com/open
     mkdir build && \
     cd build && \
     cmake .. && \
-    make && \
+    make -j$(nproc) && \
     make install && \
     cd /openmc/ && \
     pip install .
@@ -59,11 +59,11 @@ RUN git clone https://github.com/njoy/NJOY2016.git && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release ../ && \
-    make -j8
+    make -j$(nproc)
 
 ENV NJOY=/NJOY2016/build/njoy
 
-RUN pip install \
+RUN pip install --no-cache-dir \
     openmc_data_downloader \
     openmc_depletion_plotter \
     openmc_data
@@ -73,15 +73,15 @@ RUN mkdir -p ${HOME}/data
 # Download nuclear data
 # ENDFB-8.0
 # RUN cd ${HOME}/data && \
-    # wget -O nndc-b8.0.tar.xz https://anl.box.com/shared/static/uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz && \
-    # mkdir nndc-b8.0-hdf5 && \
-    # tar -xf nndc-b8.0.tar.xz -C nndc-b8.0-hdf5
+#     wget -O nndc-b8.0.tar.xz https://anl.box.com/shared/static/uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz && \
+#     mkdir nndc-b8.0-hdf5 && \
+#     tar -xf nndc-b8.0.tar.xz -C nndc-b8.0-hdf5
 
 # ENV OPENMC_CROSS_SECTIONS=${HOME}/data/nndc-b8.0-hdf5/endfb-viii.0-hdf5/cross_sections.xml
 
 # Copy workshop files
 COPY Datalabs/ ${HOME}/Datalabs/
-COPY data/ ${HOME}/data/ 
+COPY data/ ${HOME}/data/
 
 WORKDIR ${HOME}
 
